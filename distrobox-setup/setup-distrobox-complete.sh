@@ -4,7 +4,7 @@
 set -e
 
 echo "========================================"
-echo "Setupping distrobox containers..."
+echo "Setting up distrobox containers..."
 echo "========================================"
 
 sudo dnf install -y distrobox
