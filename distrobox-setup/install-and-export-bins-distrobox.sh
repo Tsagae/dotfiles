@@ -5,7 +5,7 @@ set -e
 
 # --- Configuration ---
 BOX_NAME="fedorabox"
-EXPORT_PATH="/var/home/matteo/.local/bin"
+EXPORT_PATH="/home/matteo/.local/bin"
 
 # Define your list of binaries here
 BINARIES=(
