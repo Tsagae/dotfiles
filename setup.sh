@@ -18,7 +18,7 @@ echo "Lazygit installation..."
 echo "========================================"
 
 sudo dnf install -y dnf-plugins-core
-sudo dnf copr enable dejan/lazygit
+sudo dnf copr enable dejan/lazygit -y
 
 echo "========================================"
 echo "Adding rpmfusion Nonfree..."
