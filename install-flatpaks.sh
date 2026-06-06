@@ -17,14 +17,18 @@ BASE_FLATPAKS=(
 )
 
 UTILITY_FLATPAKS=(
-#	"org.gnome.Solanum"
-#	"org.zdoom.UZDoom"
+#    "org.gnome.Solanum"
+#	 "org.zdoom.UZDoom"
 #    "org.gnome.gitlab.YaLTeR.Identity"
 #    "io.httpie.Httpie"
 #    "io.github.fizzyizzy05.binary"
 #    "org.geeqie.Geeqie"
 #    "dev.bragefuglseth.Keypunch"
 #    "io.gitlab.adhami3310.Converter"
+#	 "io.gitlab.liferooter.TextPieces"
+#	 "se.sjoerd.Graphs"
+#	 "ca.littlesvr.asunder"
+#	 "org.videolan.VLC"
 )
 
 ALL_FLATPAKS=("${BASE_FLATPAKS[@]}" "${UTILITY_FLATPAKS[@]}")
