@@ -1,0 +1,9 @@
+[user]
+ name = Matteo Zagheno
+ email = matteo2309@hotmail.com
+[init]
+ defaultBranch = main
+[core]
+ autocrlf = input
+[credential]
+ helper = cache

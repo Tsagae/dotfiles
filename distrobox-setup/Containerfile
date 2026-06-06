@@ -1,0 +1,16 @@
+FROM registry.fedoraproject.org/fedora-toolbox:latest
+
+# 1. Install common CLI tools
+RUN dnf -y update && \
+    dnf -y install zsh git wget curl dnf-plugins-core \
+    procps-ng hostname \
+    htop btop fastfetch xxd radeontop make micro tldr \
+    alsa-lib libxkbcommon # zed dependencies \
+    #vulkan-tools mangohud goverlay
+
+# 2. Install Lazygit (via Copr)
+RUN dnf -y copr enable dejan/lazygit && \
+    dnf -y install lazygit
+
+# 4. Cleanup
+RUN dnf clean all
