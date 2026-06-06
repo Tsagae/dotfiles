@@ -14,6 +14,7 @@ BASE_FLATPAKS=(
 	"org.mozilla.thunderbird"
 	"com.spotify.Client"
 	"com.jeffser.Nocturne"
+	"org.mozilla.thunderbird"
 )
 
 UTILITY_FLATPAKS=(
