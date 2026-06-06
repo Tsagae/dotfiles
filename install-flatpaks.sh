@@ -33,6 +33,11 @@ UTILITY_FLATPAKS=(
 
 ALL_FLATPAKS=("${BASE_FLATPAKS[@]}" "${UTILITY_FLATPAKS[@]}")
 
+echo "========================================"
+echo "Updating installed Flatpaks..."
+echo "========================================"
+
+flatpak update -y
 
 echo "========================================"
 echo "Installing ${#ALL_FLATPAKS[@]} Flatpaks in total..."
