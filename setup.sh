@@ -56,7 +56,7 @@ echo "========================================"
 echo "Symlinking doftiles and setting default shell..."
 echo "========================================"
 
-stow -t ~ ./dotfiles
+stow -t ~ dotfiles
 
 sudo chsh -s $(which zsh) matteo # doing it with sudo just for automation since chsh requires password input
 # parametrize with the name of the user that runs the script?
