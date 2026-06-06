@@ -4,10 +4,6 @@
 set -e
 
 echo "========================================"
-echo "Starting setup..."
-echo "========================================"
-
-echo "========================================"
 echo "Updating installed packages..."
 echo "========================================"
 
@@ -60,15 +56,3 @@ stow -t ~ dotfiles
 
 sudo chsh -s $(which zsh) matteo # doing it with sudo just for automation since chsh requires password input
 # parametrize with the name of the user that runs the script?
-
-./install-flatpaks.sh
-
-echo "========================================"
-echo "Success: Setup completed!"
-echo "Remember to enable this gnome extensions: "
-echo "	- Launch New Instance"
-echo "	- AppIndicator and KStatusNotifierItem Support"
-echo "	- Quick Settings Audio Panel"
-echo "	- Workspaces indicator by open apps"
-echo "	- ddterm"
-echo "========================================"
