@@ -59,11 +59,11 @@ echo "========================================"
 echo "Symlinking doftiles..."
 echo "========================================"
 
-rm ~/.zshrc
+rm -f ~/.zshrc
 stow -t ~ dotfiles
 
-rm ~/.config/micro/bindings.json
-rm ~/.config/micro/settings.json
+rm -f ~/.config/micro/bindings.json
+rm -f ~/.config/micro/settings.json
 stow -t ~/.config/micro micro
 
 echo "========================================"
