@@ -13,7 +13,7 @@ echo "========================================"
 echo "Lazygit installation..."
 echo "========================================"
 
-sudo dnf install -y dnf-plugins-core stow
+sudo dnf install -y dnf-plugins-core
 sudo dnf copr enable dejan/lazygit -y
 
 echo "========================================"
@@ -24,16 +24,9 @@ echo "========================================"
 sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 sudo dnf config-manager setopt fedora-cisco-openh264.enabled=1
 
-echo "========================================"
-echo "Symlinking doftiles..."
-echo "========================================"
-
-stow -t ~ dotfiles
-mkdir -p ~/.config/micro
-stow -t ~/.config/micro micro
-
 PAKCAGES=(
 	"zsh"
+	"stow"
 	"micro"
 	"btop"
 	"util-linux"
@@ -54,6 +47,17 @@ echo "Running dnf clean..."
 echo "========================================"
 
 sudo dnf clean all
+
+echo "========================================"
+echo "Symlinking doftiles..."
+echo "========================================"
+
+rm ~/.zshrc
+stow -t ~ dotfiles
+
+rm ~/.config/micro/bindings.json
+rm ~/.config/micro/settings.json
+stow -t ~/.config/micro micro
 
 echo "========================================"
 echo "Setting default shell..."
