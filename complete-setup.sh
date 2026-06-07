@@ -8,6 +8,7 @@ echo "Starting setup..."
 echo "========================================"
 
 ./base-setup.sh
+./dotfiles-setup.sh
 ./install-flatpaks.sh
 ./restore-kebindings.sh
 ./restore-gnome-favorites.sh
@@ -20,4 +21,5 @@ echo "	- AppIndicator and KStatusNotifierItem Support"
 echo "	- Quick Settings Audio Panel"
 echo "	- Workspaces indicator by open apps"
 echo "	- ddterm"
+echo "	- Caffeine"
 echo "========================================"
