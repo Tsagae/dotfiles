@@ -7,9 +7,8 @@ echo "========================================"
 echo "Installing oh-my-zsh..."
 echo "========================================"
 
-rm -f ~/.oh-my-zsh
-rm -f ~/.oh-my-zsh
-rm -f ~/.zsh_custom
+rm -rf ~/.oh-my-zsh
+rm -rf ~/.zsh_custom
 git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh_custom/plugins/zsh-autosuggestions
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 
@@ -18,6 +17,7 @@ echo "Symlinking doftiles..."
 echo "========================================"
 
 rm -f ~/.zshrc
+rm -f ~/.gitconfig
 stow -t ~ dotfiles
 
 rm -f ~/.config/micro/bindings.json
