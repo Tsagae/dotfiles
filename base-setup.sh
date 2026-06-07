@@ -37,7 +37,7 @@ PAKCAGES=(
 
 
 echo "========================================"
-echo "Installing ${#ALL_PACKAGES[@]} packages..."
+echo "Installing ${#PACKAGES[@]} packages..."
 echo "========================================"
 
 sudo dnf install -y "${PAKCAGES[@]}"
