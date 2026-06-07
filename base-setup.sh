@@ -57,3 +57,6 @@ stow -t ~/.config/micro micro
 
 sudo chsh -s $(which zsh) matteo # doing it with sudo just for automation since chsh requires password input
 # parametrize with the name of the user that runs the script?
+
+git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh_custom/plugins/zsh-autosuggestions
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
