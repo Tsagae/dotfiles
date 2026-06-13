@@ -33,6 +33,7 @@ PAKCAGES=(
 	"lazygit"
 	"gnome-tweaks"
 	"steam"
+	"google-chrome-stable"
 )
 
 
