@@ -22,6 +22,7 @@ stow -t ~ dotfiles
 
 rm -f ~/.config/micro/bindings.json
 rm -f ~/.config/micro/settings.json
+mkdir -p ~/.config/micro
 stow -t ~/.config/micro micro
 
 echo "========================================"
