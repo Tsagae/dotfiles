@@ -3,17 +3,17 @@
 # Exit immediately if a command fails
 set -e
 
-echo "========================================"
-echo "Setting up distrobox containers..."
-echo "========================================"
+#https://distrobox.it/useful_tips/
+#Resolve “Error cannot open display: :0”
+#If your container is not able to connect to your host xserver, make sure to install xhost on the host machine and run xhost +si:localuser:$USER. If you wish to enable this functionality on future reboots add the above command to your ~/.distroboxrc
 
-sudo dnf install -y distrobox
+#-$ cat ~/.distroboxrc
+#xhost +si:localuser:$USER >/dev/null
 
-mkdir -p ~/distrobox-homes
-podman build -t my-dev-base .
-distrobox-assemble create -R
+
+./setup-containers.sh
 ./install-and-export-bins-distrobox.sh
 
 echo "========================================"
-echo "Distrobox setup complete!"
+echo "Distrobox containers and binaries setup complete!"
 echo "========================================"

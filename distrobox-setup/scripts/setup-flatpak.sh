@@ -6,10 +6,12 @@ sudo dnf install flatpak  # Use 'apt install flatpak' for Ubuntu/Debian, or 'pac
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 # Install an app
-flatpak install flathub com.unity.UnityHub
+#flatpak install flathub com.unity.UnityHub
+flatpak install flathub com.jetbrains.Rider
 
 # Run the app
-flatpak run com.unity.UnityHub
+#flatpak run com.unity.UnityHub
+flatpak run com.jetbrains.Rider
 
 # A Quick Note on Sandboxing
 # Because Flatpak uses bubblewrap to sandbox applications, you are essentially running a sandbox (Flatpak) inside a sandbox (Podman/Docker via Distrobox).
