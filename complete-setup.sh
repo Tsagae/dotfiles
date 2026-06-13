@@ -12,14 +12,8 @@ echo "========================================"
 ./install-flatpaks.sh
 ./restore-kebindings.sh
 ./restore-gnome-favorites.sh
+./install-extensions.sh
 
 echo "========================================"
-echo "Success: Setup completed!"
-echo "Remember to enable this gnome extensions: "
-echo "	- Launch New Instance"
-echo "	- AppIndicator and KStatusNotifierItem Support"
-echo "	- Quick Settings Audio Panel"
-echo "	- Workspaces indicator by open apps"
-echo "	- ddterm"
-echo "	- Caffeine"
+echo "Setup completed!"
 echo "========================================"
