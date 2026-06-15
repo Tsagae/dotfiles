@@ -5,7 +5,7 @@ set -e
 
 # --- Configuration ---
 
-BASE_FLATPAKS=(
+BASE_FLATPAKS=( # all from flathub
     "com.mattjakeman.ExtensionManager"
 	"dev.vencord.Vesktop"
 	"org.gnome.NetworkDisplays"
@@ -15,6 +15,7 @@ BASE_FLATPAKS=(
 	"com.spotify.Client"
 	"com.jeffser.Nocturne"
 	"org.mozilla.thunderbird"
+	"org.signal.Signal"
 )
 
 UTILITY_FLATPAKS=(
