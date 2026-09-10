@@ -12,6 +12,7 @@ BINARIES=(
     "wol"
     "rsync"
     "tldr"
+    "nmap"
 )
 # --- Execution ---
 echo "========================================"
