@@ -24,9 +24,10 @@ echo "========================================"
 sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm -y
 sudo dnf config-manager setopt fedora-cisco-openh264.enabled=1
 
-PAKCAGES=(
+PACKAGES=(
+	"git"
+	"curl"
 	"zsh"
-	"stow"
 	"micro"
 	"btop"
 	"util-linux"
@@ -41,7 +42,7 @@ echo "========================================"
 echo "Installing ${#PACKAGES[@]} packages..."
 echo "========================================"
 
-sudo dnf install -y "${PAKCAGES[@]}"
+sudo dnf install -y "${PACKAGES[@]}"
 
 echo "========================================"
 echo "Running dnf clean..."
