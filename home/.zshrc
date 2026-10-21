@@ -77,7 +77,7 @@ plugins=(
 	zsh-autosuggestions
 )
 
-source $ZSH/oh-my-zsh.sh
+[[ -f $ZSH/oh-my-zsh.sh ]] && source $ZSH/oh-my-zsh.sh
 
 # User configuration
 export VISUAL='micro'
@@ -114,3 +114,8 @@ export MANGOHUD=1
 
 # Unity CLI
 case ":${PATH}:" in *:"$HOME/.local/bin":*) ;; *) export PATH="$HOME/.local/bin:$PATH" ;; esac
+
+# Snippets added by distrobox profiles (symlinks managed by `dotfiles`, e.g. go, rust)
+# and machine-local, untracked overrides.
+for _f in "$HOME"/.zshrc.d/*.zsh(N); do source "$_f"; done; unset _f
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

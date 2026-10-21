@@ -1,0 +1,1 @@
+golang                  apt=golang-go pacman=go zypper=go apk=go

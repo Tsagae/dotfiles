@@ -1,0 +1,9 @@
+# GNOME Shell extensions (UUIDs from extensions.gnome.org).
+# Installed with gnome-browser-connector: GNOME asks to confirm each one.
+
+launch-new-instance@gnome-shell-extensions.gcampax.github.com
+appindicatorsupport@rgcjonas.gmail.com
+quick-settings-audio-panel@rayzeq.github.io
+workspaces-by-open-apps@favo02.github.com
+ddterm@amezin.github.com
+caffeine@patapon.info

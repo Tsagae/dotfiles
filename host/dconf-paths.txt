@@ -1,0 +1,11 @@
+# dconf paths tracked by 'dotfiles gnome dump'.
+#   Paths ending with '/' are dumped recursively (whole directory).
+#   Other paths are single keys.
+# After editing, run 'dotfiles gnome dump' on the host and commit host/dconf.ini.
+
+/org/gnome/settings-daemon/plugins/media-keys/
+/org/gnome/desktop/wm/keybindings/
+/org/gnome/shell/keybindings/
+/org/gnome/mutter/keybindings/
+/org/gnome/mutter/wayland/keybindings/
+/org/gnome/shell/favorite-apps

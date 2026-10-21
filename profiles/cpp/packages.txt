@@ -1,0 +1,7 @@
+cmake
+gcc-c++                 apt=g++ pacman=gcc
+glfw-devel              apt=libglfw3-dev pacman=glfw zypper=libglfw-devel
+assimp-devel            apt=libassimp-dev pacman=assimp
+glm-devel               apt=libglm-dev pacman=glm
+google-benchmark-devel  apt=libbenchmark-dev pacman=benchmark zypper=benchmark-devel
+libwayland-cursor       apt=libwayland-cursor0 pacman=wayland zypper=libwayland-cursor0

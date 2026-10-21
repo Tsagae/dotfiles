@@ -1,0 +1,213 @@
+#!/usr/bin/env bash
+# dotfiles: single entrypoint for setting up a host or a distrobox.
+# Run `dotfiles help` for usage. See README.md for details.
+
+set -euo pipefail
+
+DOTFILES_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+export DOTFILES_DIR
+
+# shellcheck source=lib/common.sh
+source "$DOTFILES_DIR/lib/common.sh"
+# shellcheck source=lib/packages.sh
+source "$DOTFILES_DIR/lib/packages.sh"
+# shellcheck source=lib/user.sh
+source "$DOTFILES_DIR/lib/user.sh"
+# shellcheck source=lib/host.sh
+source "$DOTFILES_DIR/lib/host.sh"
+
+STATE_DIR_REL=".local/state/dotfiles"
+HOST_STEPS=(repos packages shell flatpaks gnome extensions distrobox boxes)
+
+usage() {
+	cat <<EOF
+Usage: dotfiles <command> [args]
+
+Setup
+  host [step...]            Full setup of a Fedora GNOME host. Without steps runs all of:
+                              ${HOST_STEPS[*]}
+  container [profile...]    Unattended setup of a distrobox (any distro). Profiles are
+                            folders in profiles/ (e.g. dev go rust cpp java). Also read
+                            from \$DOTFILES_PROFILES.
+
+Maintenance
+  link                      (Re)create the symlinks from home/ into \$HOME
+  update                    git pull + link
+  gnome dump                Save tracked GNOME settings to host/dconf.ini
+  gnome restore             Load host/dconf.ini into dconf
+  gnome extensions          Install the extensions in host/gnome-extensions.txt
+  boxes list                List boxes defined in distrobox/distrobox.ini
+  boxes create [name...]    Create missing boxes (all by default)
+  boxes replace [name...]   Destroy and recreate boxes (homes are kept)
+  help                      Show this help
+
+Options
+  --force                   Run 'host' inside a container or 'container' on a host
+EOF
+}
+
+FORCE=0
+
+# ------------------------------------------------------------------ host ----
+cmd_host() {
+	if is_container && ((FORCE == 0)); then
+		die "This looks like a container. 'host' is meant for the real machine (use --force to override)."
+	fi
+	((EUID != 0)) || die "Run 'dotfiles host' as your normal user (sudo is used when needed)."
+	resolve_target_user
+	local steps=("$@") s
+	((${#steps[@]})) || steps=("${HOST_STEPS[@]}")
+	# Ask for the sudo password once up front.
+	sudo -v
+	for s in "${steps[@]}"; do
+		case "$s" in
+		repos) host_repos ;;
+		packages) host_packages ;;
+		shell)
+			install_oh_my_zsh
+			link_dotfiles
+			set_push_url
+			host_set_shell
+			;;
+		flatpaks) host_flatpaks ;;
+		gnome) gnome_restore ;;
+		extensions) gnome_extensions ;;
+		distrobox) host_distrobox_install ;;
+		boxes) boxes_assemble create ;;
+		*) die "Unknown host step '$s'. Valid steps: ${HOST_STEPS[*]}" ;;
+		esac
+	done
+	section "Done"
+	ok "Host setup complete. Log out and back in to pick up the new shell and settings."
+}
+
+# ------------------------------------------------------------- container ----
+_parse_profiles() {
+	local raw=("$@") p out=()
+	if [[ -n "${DOTFILES_PROFILES:-}" ]]; then
+		read -r -a extra <<<"${DOTFILES_PROFILES//,/ }"
+		raw+=("${extra[@]}")
+	fi
+	for p in "${raw[@]}"; do
+		[[ -n "$p" ]] || continue
+		[[ -d "$DOTFILES_DIR/profiles/$p" ]] || die "Unknown profile '$p' (see $DOTFILES_DIR/profiles/)"
+		[[ " ${out[*]-} " == *" $p "* ]] || out+=("$p")
+	done
+	printf '%s\n' "${out[@]-}"
+}
+
+cmd_container() {
+	if ! is_container && ((FORCE == 0)); then
+		die "This does not look like a container. Use 'dotfiles host' (or --force)."
+	fi
+	resolve_target_user
+	local profiles=() p
+	mapfile -t profiles < <(_parse_profiles "$@")
+	[[ -n "${profiles[0]-}" ]] || profiles=()
+
+	section "Distrobox setup for $TARGET_USER (home: $TARGET_HOME)"
+	log "Package manager: $PM | profiles: ${profiles[*]:-none}"
+
+	# --- system part (root) ---
+	section "System packages"
+	[[ "$PM" == dnf ]] && fedora_enable_lazygit_copr
+	local lists=("$DOTFILES_DIR/packages/base.txt")
+	for p in "${profiles[@]}"; do lists+=("$DOTFILES_DIR/profiles/$p/packages.txt"); done
+	pkg_install_lists "${lists[@]}"
+	have lazygit || install_lazygit_binary
+
+	local zsh
+	if zsh="$(command -v zsh)" && [[ "$(getent passwd "$TARGET_USER" | cut -d: -f7)" != "$zsh" ]]; then
+		as_root usermod -s "$zsh" "$TARGET_USER" || warn "Could not change login shell"
+	fi
+
+	# --- user part ---
+	as_user "$DOTFILES_DIR/dotfiles" _container-user "${profiles[@]}"
+
+	as_root mkdir -p "$(dirname "$CONTAINER_MARKER")"
+	printf 'date=%s\nprofiles=%s\n' "$(date -Is)" "${profiles[*]}" | as_root tee "$CONTAINER_MARKER" >/dev/null
+	section "Done"
+	ok "Distrobox setup complete."
+}
+
+# Internal: user-level part of `container`, executed as the target user.
+cmd_container_user() {
+	resolve_target_user
+	mkdir -p "$HOME/$STATE_DIR_REL"
+	printf '%s\n' "$@" >"$HOME/$STATE_DIR_REL/profiles"
+	install_oh_my_zsh
+	link_dotfiles
+	link_profile_snippets "$@"
+	link_host_ssh
+	run_profile_setups "$@"
+	set_push_url
+}
+
+# ----------------------------------------------------------------- misc -----
+cmd_link() {
+	((EUID != 0)) || die "Run as your normal user."
+	link_dotfiles
+	local profiles=()
+	if [[ -f "$HOME/$STATE_DIR_REL/profiles" ]]; then
+		mapfile -t profiles <"$HOME/$STATE_DIR_REL/profiles"
+		link_profile_snippets "${profiles[@]}"
+	fi
+	is_container && link_host_ssh
+	return 0
+}
+
+cmd_update() {
+	section "Updating $DOTFILES_DIR"
+	git -C "$DOTFILES_DIR" pull --ff-only
+	cmd_link
+}
+
+cmd_gnome() {
+	case "${1:-}" in
+	dump) gnome_dump ;;
+	restore) gnome_restore ;;
+	extensions) gnome_extensions ;;
+	*) die "Usage: dotfiles gnome dump|restore|extensions" ;;
+	esac
+}
+
+cmd_boxes() {
+	local sub="${1:-list}"
+	shift || true
+	case "$sub" in
+	list) boxes_list ;;
+	create) boxes_assemble create "$@" ;;
+	replace) boxes_assemble replace "$@" ;;
+	*) die "Usage: dotfiles boxes list|create|replace [name...]" ;;
+	esac
+}
+
+main() {
+	local args=() a
+	for a in "$@"; do
+		case "$a" in
+		--force) FORCE=1 ;;
+		-h | --help) args+=(help) ;;
+		*) args+=("$a") ;;
+		esac
+	done
+	set -- "${args[@]-}"
+	local cmd="${1:-help}"
+	shift || true
+	case "$cmd" in
+	host) cmd_host "$@" ;;
+	container) cmd_container "$@" ;;
+	_container-user) cmd_container_user "$@" ;;
+	link) cmd_link ;;
+	update) cmd_update ;;
+	gnome) cmd_gnome "$@" ;;
+	boxes) cmd_boxes "$@" ;;
+	help | "") usage ;;
+	*)
+		usage
+		exit 1
+		;;
+	esac
+}
+
+main "$@"

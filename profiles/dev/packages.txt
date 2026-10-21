@@ -1,0 +1,4 @@
+# Common development dependencies for every dev-* box
+# (was the [dev-base] section: JDK + OpenGL, e.g. for JetBrains IDEs / Java apps).
+java-25-openjdk-devel   apt=default-jdk pacman=jdk-openjdk zypper=java-25-openjdk-devel
+mesa-libGL              apt=libgl1 pacman=mesa zypper=Mesa-libGL1

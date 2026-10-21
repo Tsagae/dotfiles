@@ -1,0 +1,24 @@
+# CLI tools installed everywhere (host and every distrobox).
+#
+# Format: <name> [<pm>=<alt-name>[,<alt2>]] ...
+#   <name> is the Fedora package name; <pm> is dnf|apt|pacman|zypper|apk.
+#   <pm>=- skips the package for that package manager.
+# Missing packages are reported but do not stop the setup.
+
+zsh
+git
+git-lfs                 # needed by the lfs filter in .gitconfig
+curl
+wget
+micro
+btop
+htop
+fastfetch
+make
+tldr
+lazygit                 # Fedora: COPR dejan/lazygit; elsewhere falls back to the GitHub binary
+xxd                     pacman=tinyxxd
+procps-ng               apt=procps zypper=procps apk=procps
+hostname                pacman=inetutils apk=-
+util-linux              apk=util-linux-misc
+ca-certificates

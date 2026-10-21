@@ -1,0 +1,2 @@
+# C toolchain/linker needed by rustc
+gcc                     apt=build-essential pacman=base-devel apk=build-base

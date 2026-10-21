@@ -1,0 +1,10 @@
+# Extra packages for the Fedora host (on top of packages/base.txt).
+# Same format as packages/base.txt.
+
+gnome-tweaks
+gnome-browser-connector     # used by 'dotfiles gnome extensions'
+steam                       # RPM Fusion nonfree
+google-chrome-stable        # google-chrome repo (enabled by the 'repos' step)
+flatpak
+podman
+distrobox
