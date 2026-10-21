@@ -42,7 +42,7 @@ git clone https://github.com/Tsagae/dotfiles ~/dotfiles
 **Distroboxes**, from the host:
 
 ```bash
-~/dotfiles/dotfiles boxes create          # create every box in distrobox/distrobox.ini
+dotfiles boxes create                     # create every box in distrobox/distrobox.ini
 distrobox enter dev-rust                  # first start: it sets itself up, then you're in
 ```
 
@@ -100,7 +100,7 @@ dotfiles boxes replace [name...]  Destroy + recreate boxes (their homes are kept
 dotfiles help
 ```
 
-Every step is **idempotent**, so it's always safe to re-run. Tip: add `~/dotfiles` to your `PATH`, or alias it, to call `dotfiles` from anywhere.
+Every step is **idempotent**, so it's always safe to re-run. `dotfiles` is automatically symlinked into `~/.local/bin/dotfiles` (which is in `$PATH`), so you can call `dotfiles` directly from anywhere.
 
 ---
 
@@ -118,7 +118,7 @@ Steps, in order (each one can also be run alone, e.g. `dotfiles host flatpaks gn
 |---|---|
 | `repos` | RPM Fusion free + nonfree, Cisco openh264, Google Chrome repo, COPR `dejan/lazygit` |
 | `packages` | `dnf upgrade`, then installs `packages/base.txt` + `host/packages.txt` |
-| `shell` | Clones oh-my-zsh + zsh-autosuggestions, symlinks `home/` into `$HOME`, sets zsh as the login shell |
+| `shell` | Clones oh-my-zsh + zsh-autosuggestions, symlinks `home/` into `$HOME` and `dotfiles` into `~/.local/bin`, sets zsh as the login shell |
 | `flatpaks` | Enables Flathub, updates installed flatpaks, installs `host/flatpaks.txt` |
 | `gnome` | `dconf load` of `host/dconf.ini` (keybindings, dash favourites) |
 | `extensions` | Installs `host/gnome-extensions.txt` via `gnome-browser-connector`. **GNOME asks to confirm each extension**, so this is the only interactive step |
@@ -140,7 +140,7 @@ When a link would replace an existing file (e.g. a default `~/.zshrc`), the old 
 ### What a box gets
 
 - **Its own home** in `~/distrobox-homes/<name>`.
-- **Its own clone** of this repo at `~/dotfiles` *inside that home*. All symlinks (`~/.zshrc`, `~/.gitconfig`, `~/.config/micro/*`, `~/.zshrc.d/*`) point into this clone, not into the host's files.
+- **Its own clone** of this repo at `~/dotfiles` *inside that home*. All symlinks (`~/.zshrc`, `~/.gitconfig`, `~/.config/micro/*`, `~/.zshrc.d/*`, `~/.local/bin/dotfiles`) point into this clone, not into the host's files.
 - **`~/.ssh` → `/mnt/host-ssh`**, the host's `~/.ssh` bind-mounted **read-only**. This is the only thing shared with the host. Your keys work (and so does the host's ssh-agent socket), but nothing in the box can modify them.
 - The packages from `packages/base.txt` + the box's profiles, installed with whatever package manager the image has.
 - oh-my-zsh, zsh-autosuggestions, zsh as login shell, and the clone's push URL switched to SSH.

@@ -53,6 +53,7 @@ link_dotfiles() {
 		rel="${src#"$DOTFILES_DIR/home/"}"
 		_link "$src" "$HOME/$rel"
 	done < <(find "$DOTFILES_DIR/home" \( -type f -o -type l \) -print0)
+	_link "$DOTFILES_DIR/dotfiles" "$HOME/.local/bin/dotfiles"
 	mkdir -p "$ZSHRC_D"
 	ok "Dotfiles linked"
 }

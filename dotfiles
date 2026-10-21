@@ -31,7 +31,7 @@ Setup
                             from \$DOTFILES_PROFILES.
 
 Maintenance
-  link                      (Re)create the symlinks from home/ into \$HOME
+  link                      (Re)create symlinks in \$HOME (home/ and ~/.local/bin/dotfiles)
   update                    git pull + link
   gnome dump                Save tracked GNOME settings to host/dconf.ini
   gnome restore             Load host/dconf.ini into dconf
