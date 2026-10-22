@@ -1,0 +1,14 @@
+FROM registry.fedoraproject.org/fedora-toolbox:latest
+
+# Copy base package list from repository
+COPY packages/base.txt /tmp/base.txt
+
+# 1. Enable lazygit COPR repository
+# 2. Extract Fedora package names from packages/base.txt (skipping comments and alt-PM specs)
+# 3. Install base packages and clean caches
+RUN (dnf copr --help >/dev/null 2>&1 || dnf install -y dnf5-plugins || dnf install -y dnf-plugins-core) && \
+    dnf copr enable -y dejan/lazygit && \
+    pkgs=$(sed -e 's/#.*//' -e '/^[[:space:]]*$/d' /tmp/base.txt | awk '{print $1}') && \
+    dnf install -y $pkgs && \
+    dnf clean all && \
+    rm -rf /tmp/base.txt /var/cache/dnf /var/cache/libdnf5

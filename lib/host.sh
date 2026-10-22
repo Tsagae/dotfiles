@@ -131,10 +131,21 @@ host_set_shell() {
 
 # --------------------------------------------------------------- distrobox ---
 DISTROBOX_INI="$DOTFILES_DIR/distrobox/distrobox.ini"
+FEDORA_BASE_IMAGE="localhost/dotfiles-fedora:latest"
 
 # Box sections in distrobox.ini (sections starting with '_' are templates).
 boxes_list() {
 	sed -n 's/^\[\([^]_][^]]*\)\]\s*$/\1/p' "$DISTROBOX_INI"
+}
+
+# shellcheck disable=SC2120
+boxes_build() {
+	section "Building Fedora base image ($FEDORA_BASE_IMAGE)"
+	have podman || die "podman is not installed (run: dotfiles host distrobox)"
+	podman build "$@" -t "$FEDORA_BASE_IMAGE" \
+		-f "$DOTFILES_DIR/distrobox/Containerfile.fedora" \
+		"$DOTFILES_DIR"
+	ok "Built $FEDORA_BASE_IMAGE"
 }
 
 host_distrobox_install() {
@@ -150,6 +161,10 @@ boxes_assemble() {
 	shift
 	have distrobox || die "distrobox is not installed (run: dotfiles host distrobox)"
 	mkdir -p "$HOME/distrobox-homes" "$HOME/.local/bin"
+	if have podman && ! podman image exists "$FEDORA_BASE_IMAGE" 2>/dev/null; then
+		log "Base image $FEDORA_BASE_IMAGE not found locally. Building it first..."
+		boxes_build
+	fi
 	local names=("$@") n
 	((${#names[@]})) || mapfile -t names < <(boxes_list)
 	for n in "${names[@]}"; do

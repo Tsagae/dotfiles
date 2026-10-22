@@ -73,6 +73,7 @@ dotfiles/
 │   ├── dconf-paths.txt      # which dconf dirs/keys are tracked
 │   └── dconf.ini            # tracked GNOME settings (keybindings, dash favourites)
 ├── distrobox/
+│   ├── Containerfile.fedora # local Fedora base image (pre-installs packages/base.txt)
 │   └── distrobox.ini        # box definitions (distrobox-assemble format)
 ├── profiles/                # optional extras for boxes
 │   ├── dev/                 # JDK + OpenGL libs (every dev-* box)
@@ -94,8 +95,9 @@ dotfiles update                   git pull + link
 dotfiles gnome dump               Save tracked GNOME settings into host/dconf.ini
 dotfiles gnome restore            Apply host/dconf.ini
 dotfiles gnome extensions         Install the extensions from host/gnome-extensions.txt
+dotfiles boxes build              Build the local Fedora base image with packages/base.txt
 dotfiles boxes list               List the boxes in distrobox/distrobox.ini
-dotfiles boxes create [name...]   Create missing boxes (all by default)
+dotfiles boxes create [name...]   Create missing boxes (all by default; builds image if needed)
 dotfiles boxes replace [name...]  Destroy + recreate boxes (their homes are kept)
 dotfiles help
 ```
@@ -150,14 +152,18 @@ When a link would replace an existing file (e.g. a default `~/.zshrc`), the old 
 
 ### Unattended first start: how it works
 
-`distrobox/distrobox.ini` has a template section `[_base]` that every box includes:
+`distrobox/distrobox.ini` has a base template `[_base]` for hooks and volume mounts, and `[_fedora]` which points to a local base image pre-built with [`packages/base.txt`](packages/base.txt):
 
 ```ini
 [_base]
-image=registry.fedoraproject.org/fedora-toolbox:latest
 pre_init_hooks="export SHELL=/usr/bin/zsh"
 volume="$HOME/.ssh:/mnt/host-ssh:ro"
 init_hooks="test -e /var/lib/dotfiles/bootstrapped || curl -fsSL https://raw.githubusercontent.com/Tsagae/dotfiles/main/bootstrap.sh | bash -s -- container || echo '...'"
+
+[_fedora]
+include=_base
+image=localhost/dotfiles-fedora:latest
+pull=false
 ```
 
 1. distrobox runs `init_hooks` **as root** at the end of container initialisation. Your first `distrobox enter` waits for it, and the progress shows in the output.
@@ -165,7 +171,7 @@ init_hooks="test -e /var/lib/dotfiles/bootstrapped || curl -fsSL https://raw.git
 3. Otherwise `bootstrap.sh`:
    - installs `git`/`curl` if missing
    - clones this repo over **HTTPS** into `~/dotfiles` **as your user**. If the clone already exists, it does a `git pull --ff-only` instead.
-   - runs `dotfiles container`. This installs the system packages as root, then switches to your user to set up oh-my-zsh, the symlinks, `~/.ssh`, and the profile setup scripts.
+   - runs `dotfiles container`. For Fedora boxes using `localhost/dotfiles-fedora:latest`, all base packages are already installed in the image layer, so package installation finishes in seconds. It then switches to your user to set up oh-my-zsh, the symlinks, `~/.ssh`, and any profile setup scripts.
    - writes the marker.
 4. If something fails (e.g. no network), the container **still starts** and prints a message. Fix the problem and run `~/dotfiles/dotfiles container` by hand. The next start also retries, since the marker wasn't written.
 
@@ -183,7 +189,7 @@ A box selects profiles with an environment variable in `distrobox.ini`:
 
 ```ini
 [dev-rust]
-include=_base
+include=_fedora
 hostname=dev-rust
 home=~/distrobox-homes/dev-rust
 additional_flags="--env DOTFILES_PROFILES=dev,rust"
@@ -193,17 +199,18 @@ additional_flags="--env DOTFILES_PROFILES=dev,rust"
 
 | Box | Image | Profiles | Notes |
 |---|---|---|---|
-| `fedorabox` | fedora-toolbox | none | General use. Exports `wol rsync tldr nmap` to the host's `~/.local/bin` |
-| `ubuntubox` | ubuntu-toolbox | none | |
-| `dev-go` | fedora-toolbox | `dev,go` | |
-| `dev-rust` | fedora-toolbox | `dev,rust` | |
-| `dev-cpp` | fedora-toolbox | `dev,cpp` | |
-| `dev-java` | fedora-toolbox | `dev` | The JDK comes from the `dev` profile |
+| `fedorabox` | `dotfiles-fedora` (local) | none | General use. Exports `wol rsync tldr nmap` to the host's `~/.local/bin` |
+| `ubuntubox` | `ubuntu-toolbox` (quay.io) | none | Ubuntu-based container |
+| `dev-go` | `dotfiles-fedora` (local) | `dev,go` | |
+| `dev-rust` | `dotfiles-fedora` (local) | `dev,rust` | |
+| `dev-cpp` | `dotfiles-fedora` (local) | `dev,cpp` | |
+| `dev-java` | `dotfiles-fedora` (local) | `dev` | The JDK comes from the `dev` profile |
 
 ### Creating, updating and deleting boxes
 
 ```bash
-dotfiles boxes create                # create all missing boxes
+dotfiles boxes build                 # build/rebuild the local Fedora base image
+dotfiles boxes create                # create all missing boxes (builds image if needed)
 dotfiles boxes create dev-go         # just one
 dotfiles boxes replace dev-go        # destroy + recreate: fresh system, same home
 distrobox rm dev-go                  # delete the container (the home stays)

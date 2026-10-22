@@ -36,6 +36,7 @@ Maintenance
   gnome dump                Save tracked GNOME settings to host/dconf.ini
   gnome restore             Load host/dconf.ini into dconf
   gnome extensions          Install the extensions in host/gnome-extensions.txt
+  boxes build               Build the local Fedora base image (distrobox/Containerfile.fedora)
   boxes list                List boxes defined in distrobox/distrobox.ini
   boxes create [name...]    Create missing boxes (all by default)
   boxes replace [name...]   Destroy and recreate boxes (homes are kept)
@@ -175,10 +176,11 @@ cmd_boxes() {
 	local sub="${1:-list}"
 	shift || true
 	case "$sub" in
+	build) boxes_build "$@" ;;
 	list) boxes_list ;;
 	create) boxes_assemble create "$@" ;;
 	replace) boxes_assemble replace "$@" ;;
-	*) die "Usage: dotfiles boxes list|create|replace [name...]" ;;
+	*) die "Usage: dotfiles boxes build|list|create|replace [name...]" ;;
 	esac
 }
 
