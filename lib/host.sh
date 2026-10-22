@@ -160,7 +160,7 @@ boxes_assemble() {
 	local mode="$1"
 	shift
 	have distrobox || die "distrobox is not installed (run: dotfiles host distrobox)"
-	[[ -d "$HOME/.ssh" ]] || die "$HOME/.ssh directory does not exist (needed for /mnt/host-ssh mount)."
+	[[ -d "$HOME/.ssh" ]] || die "$HOME/.ssh directory does not exist (needed for /etc/host-ssh mount)."
 	mkdir -p "$HOME/distrobox-homes" "$HOME/.local/bin"
 	if have podman && ! podman image exists "$FEDORA_BASE_IMAGE" 2>/dev/null; then
 		log "Base image $FEDORA_BASE_IMAGE not found locally. Building it first..."

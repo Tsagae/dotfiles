@@ -146,7 +146,7 @@ When a link would replace an existing file (e.g. a default `~/.zshrc`), the old 
 
 - **Its own home** in `~/distrobox-homes/<name>`.
 - **Its own clone** of this repo at `~/dotfiles` *inside that home*. All symlinks (`~/.zshrc`, `~/.gitconfig`, `~/.config/micro/*`, `~/.zshrc.d/*`, `~/.local/bin/dotfiles`) point into this clone, not into the host's files.
-- **`~/.ssh` → `/mnt/host-ssh`**, the host's `~/.ssh` bind-mounted **read-only**. This is the only thing shared with the host. Your keys work (and so does the host's ssh-agent socket), but nothing in the box can modify them.
+- **`~/.ssh` → `/etc/host-ssh`**, the host's `~/.ssh` bind-mounted **read-only**. This is the only thing shared with the host. Your keys work (and so does the host's ssh-agent socket), but nothing in the box can modify them.
 - The packages from `packages/base.txt` + the box's profiles, installed with whatever package manager the image has.
 - oh-my-zsh, zsh-autosuggestions, zsh as login shell, and the clone's push URL switched to SSH.
 
@@ -160,7 +160,7 @@ When a link would replace an existing file (e.g. a default `~/.zshrc`), the old 
 ```ini
 [_base]
 pre_init_hooks="export SHELL=/usr/bin/zsh"
-volume="$HOME/.ssh:/mnt/host-ssh:ro"
+volume="$HOME/.ssh:/etc/host-ssh:ro"
 init_hooks="test -e /var/lib/dotfiles/bootstrapped || curl -fsSL https://raw.githubusercontent.com/Tsagae/dotfiles/main/bootstrap.sh | bash -s -- container || echo '...'"
 
 [_fedora]
@@ -232,7 +232,7 @@ Same behaviour with plain `distrobox create`:
 ```bash
 distrobox create -n scratch -i quay.io/toolbx/arch-toolbox:latest \
   --home ~/distrobox-homes/scratch \
-  --volume ~/.ssh:/mnt/host-ssh:ro \
+  --volume ~/.ssh:/etc/host-ssh:ro \
   --pre-init-hooks "export SHELL=/usr/bin/zsh" \
   --init-hooks "test -e /var/lib/dotfiles/bootstrapped || curl -fsSL https://raw.githubusercontent.com/Tsagae/dotfiles/main/bootstrap.sh | bash -s -- container"
 ```

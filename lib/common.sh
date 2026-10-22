@@ -6,7 +6,7 @@ DOTFILES_PUSH_URL="${DOTFILES_PUSH_URL:-git@github.com:Tsagae/dotfiles.git}"
 DOTFILES_BRANCH="${DOTFILES_BRANCH:-main}"
 
 # Where the host's ~/.ssh is bind-mounted (read-only) inside distroboxes.
-HOST_SSH_MOUNT="${HOST_SSH_MOUNT:-/mnt/host-ssh}"
+HOST_SSH_MOUNT="${HOST_SSH_MOUNT:-/etc/host-ssh}"
 # Marker inside the *container filesystem* (not the home): recreating a box
 # with the same home re-runs the system part of the setup.
 # shellcheck disable=SC2034 # used by ./dotfiles
