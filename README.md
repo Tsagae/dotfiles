@@ -110,6 +110,9 @@ Every step is **idempotent**, so it's always safe to re-run. `dotfiles` is autom
 
 Run as your normal user (not root). `sudo` is used where needed and asks for the password once at the start.
 
+> [!IMPORTANT]
+> Make sure `~/.ssh` exists (with your SSH keys) before running the host setup. The setup verifies this up front and exits early if it is missing, as SSH keys are needed for git push access and for read-only bind mounts into distroboxes.
+
 ```bash
 ~/dotfiles/dotfiles host
 ```

@@ -56,6 +56,7 @@ cmd_host() {
 	fi
 	((EUID != 0)) || die "Run 'dotfiles host' as your normal user (sudo is used when needed)."
 	resolve_target_user
+	[[ -d "$TARGET_HOME/.ssh" ]] || die "$TARGET_HOME/.ssh directory does not exist. Please set up your SSH keys before running host setup."
 	local steps=("$@") s
 	((${#steps[@]})) || steps=("${HOST_STEPS[@]}")
 	# Ask for the sudo password once up front.

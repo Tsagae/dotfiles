@@ -69,6 +69,11 @@ main() {
 
 	clone_dir="${DOTFILES_CLONE_DIR:-$home/dotfiles}"
 
+	# Host setup requires ~/.ssh up front (for git push SSH URL and distrobox volume mounts).
+	if [[ "$mode" == host ]]; then
+		[[ -d "$home/.ssh" ]] || die "$home/.ssh directory does not exist. Please set up your SSH keys before running host setup."
+	fi
+
 	# --- make sure git is available ---------------------------------------------
 	if ! have git || ! have curl; then
 		say "Installing git/curl"
